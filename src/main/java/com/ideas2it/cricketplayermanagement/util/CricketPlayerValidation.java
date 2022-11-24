@@ -40,7 +40,7 @@ public class CricketPlayerValidation {
 	 * This method is used to validate the email of the player.
 	 * </p>
 	 *
-	 * @param gmail of the player
+	 * @param email of the player
 	 * @return true if pattern matches email
 	 */
 	public static boolean isValidEmail(String email) {

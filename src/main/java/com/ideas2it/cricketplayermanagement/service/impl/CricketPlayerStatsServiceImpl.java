@@ -4,6 +4,7 @@ import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayerStats;
 import com.ideas2it.cricketplayermanagement.repository.CricketPlayerStatsRepository;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerStatsService;
+import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -33,13 +34,15 @@ public class CricketPlayerStatsServiceImpl implements CricketPlayerStatsService 
         return cricketPlayerStatsRepository.save(cricketPlayerStats);
     }
     @Override
-    public CricketPlayerStats fetchCricketPlayerStatsById(int id) {
-        System.out.println(cricketPlayerStatsRepository.findById(id).get());
-        return cricketPlayerStatsRepository.findById(id).get();
+    public CricketPlayerStats fetchCricketPlayerStatsById(int id) throws PlayerManagementException {
+        CricketPlayerStats cricketPlayerStats = cricketPlayerStatsRepository.findById(id)
+                .orElseThrow(() -> new PlayerManagementException(id + " Player stats not found "));
+        return cricketPlayerStats;
     }
     @Override
-    public String deleteCricketPlayerStats(int id) {
-        CricketPlayerStats cricketPlayerStats = cricketPlayerStatsRepository.findById(id).get();
+    public String deleteCricketPlayerStats(int id) throws PlayerManagementException {
+        CricketPlayerStats cricketPlayerStats = cricketPlayerStatsRepository.findById(id)
+                .orElseThrow( ()-> new PlayerManagementException(id + " Record not found "));
         cricketPlayerStatsRepository.delete(cricketPlayerStats);
         return "Id : "+ id +" Deleted successfully";
     }

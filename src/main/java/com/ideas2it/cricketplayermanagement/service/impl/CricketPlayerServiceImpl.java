@@ -4,7 +4,9 @@ import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketTeam;
 import com.ideas2it.cricketplayermanagement.repository.CricketPlayerRepository;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
+import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,21 +33,34 @@ public class CricketPlayerServiceImpl implements CricketPlayerService {
         return cricketPlayerRepository.findAll();
     }
     @Override
-    public CricketPlayer fetchCricketPlayerById(int id) {
-        return cricketPlayerRepository.findById(id).get();
+    public CricketPlayer fetchCricketPlayerById(int id) throws PlayerManagementException {
+        return cricketPlayerRepository.fetchById(id);
     }
     @Override
-    public String deleteCricketPlayer(int id) {
-        CricketPlayer cricketPlayer = cricketPlayerRepository.findById(id).get();
-        cricketPlayerRepository.delete(cricketPlayer);
-        return "Id : "+ id +" Deleted successfully";
+    public boolean deleteCricketPlayer(int id) throws PlayerManagementException {
+        try{
+            CricketPlayer cricketPlayer = cricketPlayerRepository.fetchById(id);
+            if(null == cricketPlayer) {
+                return false;
+            } else {
+                cricketPlayerRepository.delete(cricketPlayer);
+                return true;
+            }
+        }catch(Exception exception) {
+            throw new PlayerManagementException(exception.getMessage());
+        }
+
     }
 
     @Override
-    public CricketPlayer assignTeam(List<CricketTeam> cricketTeams, CricketPlayer cricketPlayer) {
+    public String assignTeam(List<CricketTeam> cricketTeams, CricketPlayer cricketPlayer) {
         cricketPlayer.setCricketTeams(cricketTeams);
-        insertCricketPlayer(cricketPlayer);
-        return cricketPlayer;
+        CricketPlayer cricketPlayer1 = cricketPlayerRepository.save(cricketPlayer);
+        if(cricketPlayer1 != null) {
+            return "Team assigned successfully";
+        } else {
+            return "Oops.....!";
+        }
     }
 
     @Override

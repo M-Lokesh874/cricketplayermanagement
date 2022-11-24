@@ -22,10 +22,9 @@ public class CricketPlayerStats extends BaseModel {
 	private double strikeRate;
 	private int topScore;
 	private int noOfBallsFaced;
-	@OneToOne(cascade = CascadeType.MERGE)
+	@OneToOne//(cascade = CascadeType.ALL)
 	@JoinColumn(name = "player_id")
 	private CricketPlayer cricketPlayer;
-
 	@Override
 	public String toString() {
 		return  "\n-------------Player stats------------"

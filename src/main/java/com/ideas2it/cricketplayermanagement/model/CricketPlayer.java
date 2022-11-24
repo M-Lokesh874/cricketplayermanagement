@@ -9,6 +9,8 @@ import lombok.*;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import com.ideas2it.cricketplayermanagement.util.constant.Gender;
+import org.hibernate.annotations.Where;
+import org.hibernate.sql.ast.Clause;
 
 /**
  * <p>
@@ -17,13 +19,12 @@ import com.ideas2it.cricketplayermanagement.util.constant.Gender;
  */
 @Entity
 @Table(name = "players")
-@SQLDelete(sql = "UPDATE players SET is_deleted = 1 WHERE id = ?", check=ResultCheckStyle.COUNT)
+@SQLDelete(sql = "UPDATE players SET is_deleted = 1 WHERE id = ?", check = ResultCheckStyle.COUNT)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CricketPlayer extends BaseModel {
-
 	private String playerCode;
 	private String name;
 	private String country;
@@ -34,9 +35,8 @@ public class CricketPlayer extends BaseModel {
 	private String email;
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "playersandteams")
-
+	@JsonIgnore
 	private List<CricketTeam> cricketTeams;
-
 	@Override
 	public String toString() {
 		return  "\n-------Player details----------"

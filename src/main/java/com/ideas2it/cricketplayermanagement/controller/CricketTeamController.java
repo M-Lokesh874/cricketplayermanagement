@@ -4,6 +4,7 @@ import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketTeam;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
+import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CricketTeamController {
     @Autowired
     CricketPlayerService cricketPlayerService;
 
-    @PostMapping(value = "saveCricketTeam", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "saveCricketTeam")
     public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) {
         System.out.println("team save works properly");
         return cricketTeamService.insertCricketTeam(cricketTeam);
@@ -33,14 +34,24 @@ public class CricketTeamController {
 
     @GetMapping(value = "getCricketTeam/{id}")
     public CricketTeam getTeamById(@PathVariable int id) {
-        System.out.println("get works properly");
-        return cricketTeamService.fetchCricketTeamById(id);
+        try {
+            System.out.println("get works properly");
+            return cricketTeamService.fetchCricketTeamById(id);
+        } catch (PlayerManagementException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     @DeleteMapping(value = "deleteTeam/{id}")
     public String deleteTeam(@PathVariable int id) {
-        System.out.println("Deleted successfully");
-        return cricketTeamService.deleteCricketTeam(id);
+        try {
+            System.out.println("Deleted successfully");
+            return cricketTeamService.deleteCricketTeam(id);
+        } catch (PlayerManagementException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     @PutMapping(value = "updateTeam")
@@ -50,14 +61,14 @@ public class CricketTeamController {
     }
 
     @PutMapping(value = "assignCaptain/{teamId}/{playerId}")
-    public CricketTeam assignCaptain(@PathVariable int teamId, @PathVariable int playerId) {
+    public String assignCaptain(@PathVariable int teamId, @PathVariable int playerId) throws PlayerManagementException {
         CricketTeam cricketTeam = cricketTeamService.fetchCricketTeamById(teamId);
         CricketPlayer cricketPlayer = cricketPlayerService.fetchCricketPlayerById(playerId);
         return cricketTeamService.assignCaptain(cricketTeam, cricketPlayer);
     }
 
     @PutMapping(value = "assignWicketKeeper/{teamId}/{playerId}")
-    public CricketTeam assignWicketKeeper(@PathVariable int teamId, @PathVariable int playerId) {
+    public String assignWicketKeeper(@PathVariable int teamId, @PathVariable int playerId) throws PlayerManagementException {
         CricketTeam cricketTeam = cricketTeamService.fetchCricketTeamById(teamId);
         CricketPlayer cricketPlayer = cricketPlayerService.fetchCricketPlayerById(playerId);
         return cricketTeamService.assignWicketKeeper(cricketTeam, cricketPlayer);

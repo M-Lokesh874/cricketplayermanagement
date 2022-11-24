@@ -4,6 +4,7 @@ import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayerStats;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerStatsService;
+import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -31,9 +32,14 @@ public class CricketPlayerStatsController {
     }
 
     @GetMapping(value = "getStatsById/{id}")
-    public CricketPlayerStats getStatsById(@PathVariable int id) {
-        System.out.println("get works properly");
-        return cricketPlayerStatsService.fetchCricketPlayerStatsById(id);
+    public CricketPlayerStats getStatsById(@PathVariable int id) throws PlayerManagementException {
+        try {
+            System.out.println("get works properly");
+            return cricketPlayerStatsService.fetchCricketPlayerStatsById(id);
+        } catch (PlayerManagementException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     @PutMapping(value = "updateStats")
@@ -44,12 +50,17 @@ public class CricketPlayerStatsController {
 
     @DeleteMapping(value = "deleteStats/{id}")
     public String deleteStats(@PathVariable int id) {
-        System.out.println("deleted successfully");
-        return cricketPlayerStatsService.deleteCricketPlayerStats(id);
+        try {
+            System.out.println("deleted successfully");
+            return cricketPlayerStatsService.deleteCricketPlayerStats(id);
+        } catch (PlayerManagementException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     @PutMapping (value = "assignPlayer/{statsId}/{playerId}")
-    public CricketPlayerStats getPlayerForStats(@PathVariable int playerId, @PathVariable int statsId) {
+    public CricketPlayerStats getPlayerForStats(@PathVariable int playerId, @PathVariable int statsId) throws PlayerManagementException {
         CricketPlayerStats cricketPlayerStats = cricketPlayerStatsService.fetchCricketPlayerStatsById(statsId);
         CricketPlayer cricketPlayer = cricketPlayerService.fetchCricketPlayerById(playerId);
         return cricketPlayerStatsService.assignPlayer(cricketPlayerStats, cricketPlayer);
