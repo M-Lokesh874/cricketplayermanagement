@@ -2,7 +2,6 @@ package com.ideas2it.cricketplayermanagement.util.connection;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
 import com.ideas2it.cricketplayermanagement.model.BaseModel;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayerStats;

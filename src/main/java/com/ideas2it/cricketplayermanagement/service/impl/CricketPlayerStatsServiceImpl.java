@@ -8,6 +8,7 @@ import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementExcep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -26,30 +27,53 @@ public class CricketPlayerStatsServiceImpl implements CricketPlayerStatsService 
         return cricketPlayerStatsRepository.save(cricketPlayerStats);
     }
     @Override
-    public List<CricketPlayerStats> fetchCricketPlayerStats() {
-        return cricketPlayerStatsRepository.findAll();
+    public List<CricketPlayerStats> fetchCricketPlayerStats() throws PlayerManagementException {
+        List<CricketPlayerStats> cricketPlayerStats = cricketPlayerStatsRepository.findAll();
+        if(!cricketPlayerStats.isEmpty()) {
+            return cricketPlayerStats;
+        } else {
+            throw new PlayerManagementException(" Cricketplayer stats does not exist ");
+        }
     }
     @Override
-    public CricketPlayerStats updateCricketPlayerStats(CricketPlayerStats cricketPlayerStats) {
-        return cricketPlayerStatsRepository.save(cricketPlayerStats);
+    public String updateCricketPlayerStats(CricketPlayerStats cricketPlayerStats, int id) throws PlayerManagementException {
+        cricketPlayerStats = fetchCricketPlayerStatsById(id);
+        if(null != cricketPlayerStats) {
+            cricketPlayerStats.setCricketPlayer(cricketPlayerStats.getCricketPlayer());
+            cricketPlayerStatsRepository.save(cricketPlayerStats);
+            return "updated successfully";
+        } else {
+            return "oops....!";
+        }
+
     }
     @Override
     public CricketPlayerStats fetchCricketPlayerStatsById(int id) throws PlayerManagementException {
-        CricketPlayerStats cricketPlayerStats = cricketPlayerStatsRepository.findById(id)
-                .orElseThrow(() -> new PlayerManagementException(id + " Player stats not found "));
-        return cricketPlayerStats;
+        Optional<CricketPlayerStats> cricketPlayerStats = cricketPlayerStatsRepository.findById(id);
+        if(!cricketPlayerStats.isPresent()) {
+            throw new PlayerManagementException("Cricketplayer stats does not exist with the ID: "+id);
+        } else {
+            return cricketPlayerStats.get();
+        }
     }
     @Override
-    public String deleteCricketPlayerStats(int id) throws PlayerManagementException {
-        CricketPlayerStats cricketPlayerStats = cricketPlayerStatsRepository.findById(id)
-                .orElseThrow( ()-> new PlayerManagementException(id + " Record not found "));
-        cricketPlayerStatsRepository.delete(cricketPlayerStats);
-        return "Id : "+ id +" Deleted successfully";
+    public void deleteCricketPlayerStats(int id) throws PlayerManagementException {
+        Optional<CricketPlayerStats> cricketPlayerStats = cricketPlayerStatsRepository.findById(id);
+        if(!cricketPlayerStats.isPresent()) {
+            throw new PlayerManagementException("Cricketplayer stats does not exist with the ID: "+id);
+        } else {
+            cricketPlayerStatsRepository.deleteById(id);
+        }
     }
     @Override
-    public CricketPlayerStats assignPlayer(CricketPlayerStats cricketPlayerStats, CricketPlayer cricketPlayer) {
+    public String assignPlayer(CricketPlayerStats cricketPlayerStats, CricketPlayer cricketPlayer) {
         cricketPlayerStats.setCricketPlayer(cricketPlayer);
         insertCricketPlayerStats(cricketPlayerStats);
-        return cricketPlayerStats;
+        if(null != cricketPlayerStats) {
+            return "player assigned successfully";
+        } else {
+            return "oops...!";
+        }
+
     }
 }

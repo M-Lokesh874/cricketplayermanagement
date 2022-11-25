@@ -3,14 +3,11 @@ package com.ideas2it.cricketplayermanagement.model;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import com.ideas2it.cricketplayermanagement.util.constant.Gender;
-import org.hibernate.annotations.Where;
-import org.hibernate.sql.ast.Clause;
 
 /**
  * <p>

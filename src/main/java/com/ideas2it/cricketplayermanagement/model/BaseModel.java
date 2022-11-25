@@ -27,6 +27,7 @@ public class BaseModel {
 	private boolean deleted;
 
 	@CreationTimestamp
+	@Column(updatable = false)
 	private Date createdAt;
 
 	@UpdateTimestamp

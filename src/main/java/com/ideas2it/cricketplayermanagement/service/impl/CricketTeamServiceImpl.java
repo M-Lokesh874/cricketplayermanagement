@@ -8,6 +8,7 @@ import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementExcep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -29,30 +30,40 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     }
 
     @Override
-    public List<CricketTeam> fetchCricketTeams() {
-        return cricketTeamRepository.findAll();
+    public List<CricketTeam> fetchCricketTeams() throws PlayerManagementException {
+        List<CricketTeam> cricketTeams = cricketTeamRepository.findAll();
+        if(!cricketTeams.isEmpty()) {
+            return cricketTeams;
+        } else {
+            throw new PlayerManagementException("Cricket team does not exist");
+        }
     }
 
     @Override
     public CricketTeam fetchCricketTeamById(int id) throws PlayerManagementException {
-        CricketTeam cricketTeam = cricketTeamRepository.findById(id)
-                .orElseThrow(() -> new PlayerManagementException(id + " team not found"));
-        return cricketTeam;
+        Optional<CricketTeam> cricketTeam = cricketTeamRepository.findById(id);
+        if(!cricketTeam.isPresent()) {
+            throw new PlayerManagementException("Cricket team does not exist with the ID: "+id);
+        } else {
+            return cricketTeam.get();
+        }
     }
 
     @Override
-    public String deleteCricketTeam(int id) throws PlayerManagementException {
-        CricketTeam cricketTeam = cricketTeamRepository.findById(id)
-                .orElseThrow(() -> new PlayerManagementException(id + " Record not found "));
-        cricketTeamRepository.delete(cricketTeam);
-        return "Id : "+ id +" Deleted successfully";
+    public void deleteCricketTeam(int id) throws PlayerManagementException {
+        Optional<CricketTeam> cricketTeam = cricketTeamRepository.findById(id);
+        if(!cricketTeam.isPresent()) {
+            throw new PlayerManagementException("Cricket team does not exist with the ID: "+id);
+        } else {
+            cricketTeamRepository.deleteById(id);
+        }
     }
 
     @Override
     public String assignCaptain(CricketTeam cricketTeam, CricketPlayer cricketPlayer) {
         cricketTeam.setCaptain(cricketPlayer);
-        CricketTeam cricketTeam1 = cricketTeamRepository.save(cricketTeam);
-        if(null != cricketTeam1) {
+        cricketTeam = cricketTeamRepository.save(cricketTeam);
+        if(null != cricketTeam) {
             return "Captain assigned successfully";
         } else {
             return "Not assigned";
@@ -62,8 +73,8 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     @Override
     public String assignWicketKeeper(CricketTeam cricketTeam, CricketPlayer cricketPlayer) {
         cricketTeam.setWicketKeeper(cricketPlayer);
-        CricketTeam cricketTeam1 = cricketTeamRepository.save(cricketTeam);
-        if(null != cricketTeam1) {
+        cricketTeam = cricketTeamRepository.save(cricketTeam);
+        if(null != cricketTeam) {
             return "WicketKeeper assigned successfully";
         } else {
             return "Not assigned";
@@ -71,7 +82,15 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     }
 
     @Override
-    public CricketTeam updateCricketTeam(CricketTeam cricketTeam) {
-        return cricketTeamRepository.save(cricketTeam);
+    public String updateCricketTeam(CricketTeam cricketTeam, int id) throws PlayerManagementException {
+        cricketTeam = fetchCricketTeamById(id);
+        if(null != cricketTeam) {
+            cricketTeam.setCaptain(cricketTeam.getCaptain());
+            cricketTeam.setWicketKeeper(cricketTeam.getWicketKeeper());
+            cricketTeamRepository.save(cricketTeam);
+            return "updated successfully";
+        } else {
+            throw new PlayerManagementException("server error");
+        }
     }
 }

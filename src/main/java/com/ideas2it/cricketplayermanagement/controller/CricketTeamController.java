@@ -6,9 +6,7 @@ import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -22,42 +20,27 @@ public class CricketTeamController {
 
     @PostMapping(value = "saveCricketTeam")
     public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) {
-        System.out.println("team save works properly");
         return cricketTeamService.insertCricketTeam(cricketTeam);
     }
 
     @GetMapping(value = "getAllCricketTeams")
-    public List<CricketTeam> getCricketTeams() {
-        System.out.println("loaded successfully");
+    public List<CricketTeam> getCricketTeams() throws PlayerManagementException {
         return cricketTeamService.fetchCricketTeams();
     }
 
     @GetMapping(value = "getCricketTeam/{id}")
-    public CricketTeam getTeamById(@PathVariable int id) {
-        try {
-            System.out.println("get works properly");
-            return cricketTeamService.fetchCricketTeamById(id);
-        } catch (PlayerManagementException e) {
-            System.out.println(e);
-        }
-        return null;
+    public CricketTeam getTeamById(@PathVariable int id) throws PlayerManagementException {
+        return cricketTeamService.fetchCricketTeamById(id);
     }
 
     @DeleteMapping(value = "deleteTeam/{id}")
-    public String deleteTeam(@PathVariable int id) {
-        try {
-            System.out.println("Deleted successfully");
-            return cricketTeamService.deleteCricketTeam(id);
-        } catch (PlayerManagementException e) {
-            System.out.println(e);
-        }
-        return null;
+    public void deleteTeam(@PathVariable int id) throws PlayerManagementException {
+        cricketTeamService.deleteCricketTeam(id);
     }
 
-    @PutMapping(value = "updateTeam")
-    public CricketTeam updateTeam(@RequestBody CricketTeam cricketTeam) {
-        System.out.println("updated successfully");
-        return cricketTeamService.updateCricketTeam(cricketTeam);
+    @PutMapping(value = "updateTeam/{id}")
+    public String updateTeam(@RequestBody CricketTeam cricketTeam, @PathVariable int id) throws PlayerManagementException {
+        return cricketTeamService.updateCricketTeam(cricketTeam, id);
     }
 
     @PutMapping(value = "assignCaptain/{teamId}/{playerId}")

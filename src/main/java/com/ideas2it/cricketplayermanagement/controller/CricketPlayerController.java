@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,25 +20,37 @@ public class CricketPlayerController {
     public CricketTeamService cricketTeamService;
 
     @PostMapping(value = "saveCricketPlayer")
-    public CricketPlayer createCricketPlayer(@RequestBody CricketPlayer cricketPlayer) throws ParseException {
-        System.out.println("player save works properly");
-        return cricketPlayerService.insertCricketPlayer(cricketPlayer);
+    public ResponseEntity<CricketPlayer> createCricketPlayer(@RequestBody CricketPlayer cricketPlayer)  {
+        cricketPlayer = cricketPlayerService.insertCricketPlayer(cricketPlayer);
+        if (null != cricketPlayer) {
+            return ResponseEntity.of(Optional.of(cricketPlayer));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping(value = "getAllCricketPlayers")
-    public List<CricketPlayer> fetchCricketPlayers() {
-        System.out.println("loaded successfully");
-        return cricketPlayerService.fetchCricketPlayers();
+    public ResponseEntity<List<CricketPlayer>> fetchCricketPlayers() {
+        try {
+            List<CricketPlayer> cricketPlayers = cricketPlayerService.fetchCricketPlayers();
+            if (!cricketPlayers.isEmpty()) {
+                return ResponseEntity.of(Optional.of(cricketPlayers));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (PlayerManagementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("getCricketPlayer/{id}")
-    public ResponseEntity<CricketPlayer> fetchCricketPlayerById(@PathVariable int id) {
+    public ResponseEntity<?> fetchCricketPlayerById(@PathVariable int id) {
         try {
             CricketPlayer cricketPlayer = cricketPlayerService.fetchCricketPlayerById(id);
-            if(null != cricketPlayer){
+            if(null != cricketPlayer) {
                 return ResponseEntity.of(Optional.of(cricketPlayer));
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cricket Player does not exist with the ID: "+id);
             }
         } catch (PlayerManagementException e) {
             e.printStackTrace();
@@ -47,22 +58,19 @@ public class CricketPlayerController {
         }
     }
 
-    @PutMapping(value = "updateCricketPlayer")
-    public CricketPlayer updateCricketPlayer(@RequestBody CricketPlayer cricketPlayer) {
-        System.out.println("update works properly");
-        return cricketPlayerService.updateCricketPlayer(cricketPlayer);
+    @PutMapping(value = "updateCricketPlayer/{id}")
+    public String updateCricketPlayer(@RequestBody CricketPlayer cricketPlayer, @PathVariable int id) throws PlayerManagementException {
+        return cricketPlayerService.updateCricketPlayer(cricketPlayer, id);
     }
 
     @DeleteMapping("deleteCricketPlayer/{id}")
-    public ResponseEntity<CricketPlayer> deleteCricketPlayer(@PathVariable int id) {
+    public ResponseEntity<String> deleteCricketPlayer(@PathVariable int id) {
         try {
-            boolean flag = cricketPlayerService.deleteCricketPlayer(id);
-            if(flag) {
-
-                //return cricketPlayerService.deleteCricketPlayer(id);
-                return ResponseEntity.ok().build();
+            boolean found = cricketPlayerService.deleteCricketPlayer(id);
+            if(found) {
+                return ResponseEntity.ok().body("deleted successfully");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cricket Player does not exist with the ID: "+id);
             }
         } catch (PlayerManagementException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -75,5 +83,32 @@ public class CricketPlayerController {
             List<CricketTeam> cricketTeams = cricketPlayer.getCricketTeams();
             cricketTeams.add(cricketTeam);
             return cricketPlayerService.assignTeam(cricketTeams, cricketPlayer);
+    }
+    @GetMapping(value = "searchCricketPlayers/{name}")
+    public ResponseEntity<List<CricketPlayer>> searchCricketPlayers(@PathVariable String name) {
+        try {
+            List<CricketPlayer> cricketPlayers = cricketPlayerService.searchCricketPlayer(name);
+            if (!cricketPlayers.isEmpty()) {
+                return ResponseEntity.of(Optional.of(cricketPlayers));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (PlayerManagementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "getMultiplePlayers")
+    public ResponseEntity<List<CricketPlayer>> getPlayersByMultipleIds(@RequestBody List<Integer> ids) {
+        try {
+            List<CricketPlayer> cricketPlayers = cricketPlayerService.getMultiplePlayers(ids);
+            if (!cricketPlayers.isEmpty()) {
+                return ResponseEntity.of(Optional.of(cricketPlayers));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (PlayerManagementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
