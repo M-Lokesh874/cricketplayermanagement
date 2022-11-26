@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @ResponseStatus
 public class PlayerManagementExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(PlayerManagementException.class)
     public ResponseEntity<ErrorMessage> notFoundException(PlayerManagementException playerManagementException) {
         ErrorMessage errorMessage = new ErrorMessage(HttpStatus.NOT_FOUND, playerManagementException.getMessage());

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 public class PlayerManagementLogger {
 
 	public static Logger logger = LogManager.getLogger(PlayerManagementLogger.class);
-
 	public static void info(String message) {
 		logger.info(message);
 	}

@@ -3,7 +3,6 @@ package com.ideas2it.cricketplayermanagement.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.springframework.http.HttpStatus;
 @Data
 @NoArgsConstructor

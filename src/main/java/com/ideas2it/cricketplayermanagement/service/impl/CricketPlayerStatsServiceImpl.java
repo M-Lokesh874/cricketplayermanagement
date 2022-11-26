@@ -74,6 +74,5 @@ public class CricketPlayerStatsServiceImpl implements CricketPlayerStatsService 
         } else {
             return "oops...!";
         }
-
     }
 }

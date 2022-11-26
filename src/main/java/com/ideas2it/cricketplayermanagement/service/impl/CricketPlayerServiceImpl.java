@@ -7,7 +7,6 @@ import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
@@ -62,7 +61,8 @@ public class CricketPlayerServiceImpl implements CricketPlayerService {
         cricketPlayer = fetchCricketPlayerById(id);
         if(null != cricketPlayer) {
             cricketPlayer.setCricketTeams(cricketPlayer.getCricketTeams());
-            cricketPlayerRepository.save(cricketPlayer);
+            cricketPlayer = cricketPlayerRepository.save(cricketPlayer);
+
             return "updated successfully";
         } else {
             return "Oops....!";

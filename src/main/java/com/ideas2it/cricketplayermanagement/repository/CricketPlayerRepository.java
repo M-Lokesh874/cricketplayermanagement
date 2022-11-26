@@ -3,7 +3,10 @@ package com.ideas2it.cricketplayermanagement.repository;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
+@org.springframework.stereotype.Repository
 public interface CricketPlayerRepository extends JpaRepository<CricketPlayer, Integer> {
     @Query(value = "select * from players where is_deleted='0' and id =:id", nativeQuery = true)
     public CricketPlayer findById(int id);

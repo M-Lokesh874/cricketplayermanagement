@@ -1,7 +1,9 @@
 package com.ideas2it.cricketplayermanagement.controller;
 
+import com.ideas2it.cricketplayermanagement.mapper.ObjetMapper;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketTeam;
+import com.ideas2it.cricketplayermanagement.model.CricketTeamDto;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
@@ -11,12 +13,13 @@ import java.util.List;
 
 @RestController
 public class CricketTeamController {
-
     @Autowired
     CricketTeamService cricketTeamService;
-
     @Autowired
     CricketPlayerService cricketPlayerService;
+
+    @Autowired
+    public ObjetMapper objetMapper;
 
     @PostMapping(value = "saveCricketTeam")
     public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) {
@@ -24,13 +27,15 @@ public class CricketTeamController {
     }
 
     @GetMapping(value = "getAllCricketTeams")
-    public List<CricketTeam> getCricketTeams() throws PlayerManagementException {
-        return cricketTeamService.fetchCricketTeams();
+    public List<CricketTeamDto> getCricketTeams() throws PlayerManagementException {
+        List<CricketTeam> cricketTeams = cricketTeamService.fetchCricketTeams();
+        return objetMapper.convertTeamEntityIntoDto(cricketTeams);
     }
 
     @GetMapping(value = "getCricketTeam/{id}")
-    public CricketTeam getTeamById(@PathVariable int id) throws PlayerManagementException {
-        return cricketTeamService.fetchCricketTeamById(id);
+    public CricketTeamDto getTeamById(@PathVariable int id) throws PlayerManagementException {
+        CricketTeam cricketTeam = cricketTeamService.fetchCricketTeamById(id);
+        return objetMapper.convertTeamEntityIntoDto(cricketTeam);
     }
 
     @DeleteMapping(value = "deleteTeam/{id}")
