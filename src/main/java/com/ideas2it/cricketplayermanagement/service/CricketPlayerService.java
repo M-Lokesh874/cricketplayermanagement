@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface CricketPlayerService {
 
-	public CricketPlayer insertCricketPlayer(CricketPlayer cricketPlayer);
+	public CricketPlayer insertCricketPlayer(CricketPlayer cricketPlayer) throws Exception;
 	public List<CricketPlayer> fetchCricketPlayers() throws PlayerManagementException;
 	public String updateCricketPlayer(CricketPlayer cricketPlayer, int id) throws PlayerManagementException;
 	public CricketPlayer fetchCricketPlayerById(int id) throws PlayerManagementException;
@@ -24,4 +24,5 @@ public interface CricketPlayerService {
 	public String assignTeam(List<CricketTeam > cricketTeams, CricketPlayer cricketPlayer);
 	public List<CricketPlayer> searchCricketPlayer(String name) throws PlayerManagementException;
     public List<CricketPlayer> getMultiplePlayers(List<Integer> ids) throws PlayerManagementException;
+	public long getCount();
 }

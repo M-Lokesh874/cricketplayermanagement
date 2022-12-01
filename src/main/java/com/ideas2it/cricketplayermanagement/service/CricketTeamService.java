@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface CricketTeamService {
 
-    public CricketTeam insertCricketTeam(CricketTeam cricketTeam);
+    public CricketTeam insertCricketTeam(CricketTeam cricketTeam) throws PlayerManagementException;
     public List<CricketTeam> fetchCricketTeams() throws PlayerManagementException;
     public String updateCricketTeam(CricketTeam cricketTeam, int id) throws PlayerManagementException;
     public CricketTeam fetchCricketTeamById(int id) throws PlayerManagementException;

@@ -60,5 +60,4 @@ public class ObjetMapper {
         cricketTeamDto = modelMapper.map(cricketTeam, CricketTeamDto.class);
         return cricketTeamDto;
     }
-
 }

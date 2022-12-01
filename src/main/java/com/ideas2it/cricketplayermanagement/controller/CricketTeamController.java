@@ -22,7 +22,7 @@ public class CricketTeamController {
     public ObjetMapper objetMapper;
 
     @PostMapping(value = "saveCricketTeam")
-    public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) {
+    public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) throws PlayerManagementException {
         return cricketTeamService.insertCricketTeam(cricketTeam);
     }
 

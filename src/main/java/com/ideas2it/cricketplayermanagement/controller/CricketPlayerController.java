@@ -2,15 +2,21 @@ package com.ideas2it.cricketplayermanagement.controller;
 
 import com.ideas2it.cricketplayermanagement.mapper.ObjetMapper;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
-import com.ideas2it.cricketplayermanagement.model.CricketPlayerDto;
 import com.ideas2it.cricketplayermanagement.model.CricketTeam;
+import com.ideas2it.cricketplayermanagement.model.JwtRequest;
+import com.ideas2it.cricketplayermanagement.model.JwtResponse;
 import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.PlayerManagementLogger;
+import com.ideas2it.cricketplayermanagement.util.config.JwtUtil;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +29,40 @@ public class CricketPlayerController {
     @Autowired
     public ObjetMapper objetMapper;
 
-    @PostMapping(value = "saveCricketPlayer")
-    public ResponseEntity<CricketPlayerDto> createCricketPlayer(@RequestBody CricketPlayer cricketPlayer)  {
-        cricketPlayer = cricketPlayerService.insertCricketPlayer(cricketPlayer);
-        if (null != cricketPlayer) {
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+/*    @Autowired
+    private MyUserDetailsService myUserDetailsService;*/
+    @GetMapping("/home")
+    public String home() {
+        return "welcome home";
+    }
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest jwtRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
+        } catch (BadCredentialsException badCredentialsException) {
+            throw new Exception("Incorrect credentials", badCredentialsException);
+        }
+/*        final UserDetails userDetails = myUserDetailsService.loadUserByUsername(
+                jwtRequest.getUsername()
+        );*/
+      /*  final String jwt = jwtUtil.generateToken(userDetails);*/
+        return null; /*ResponseEntity.ok(new JwtResponse(jwt));*/
+    }
+
+    @PostMapping(value = "/saveCricketPlayer")
+    public ResponseEntity<?> createCricketPlayer(@RequestBody CricketPlayer cricketPlayer)  {
+        try {
+            cricketPlayer = cricketPlayerService.insertCricketPlayer(cricketPlayer);
             return ResponseEntity.of(Optional.of(objetMapper.convertPlayerEntityIntoDto(cricketPlayer)));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Player table does not exit");
         }
     }
 
@@ -58,7 +91,6 @@ public class CricketPlayerController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cricket Player does not exist with the ID: "+id);
             }
         } catch (PlayerManagementException e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -96,7 +128,7 @@ public class CricketPlayerController {
             if (!cricketPlayers.isEmpty()) {
                 return ResponseEntity.of(Optional.of(objetMapper.convertPlayerEntityIntoDto(cricketPlayers)));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cricket Player does not exist with the name you searched");
             }
         } catch (PlayerManagementException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -110,10 +142,14 @@ public class CricketPlayerController {
             if (!cricketPlayers.isEmpty()) {
                 return ResponseEntity.of(Optional.of(objetMapper.convertPlayerEntityIntoDto(cricketPlayers)));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cricket Player does not exist with the id you searched");
             }
         } catch (PlayerManagementException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    @GetMapping(value = "getCount")
+    public long getCount() {
+        return cricketPlayerService.getCount();
     }
 }

@@ -7,6 +7,8 @@ import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,7 +25,9 @@ public class CricketPlayerServiceImpl implements CricketPlayerService {
     @Autowired
     public CricketPlayerRepository cricketPlayerRepository;
     @Override
-    public CricketPlayer insertCricketPlayer(CricketPlayer cricketPlayer) {
+    public CricketPlayer insertCricketPlayer(CricketPlayer cricketPlayer) throws Exception {
+        long id = getCount();
+        cricketPlayer.setPlayerCode("CRIC" + ++id);
         return cricketPlayerRepository.save(cricketPlayer);
     }
     @Override
@@ -77,5 +81,8 @@ public class CricketPlayerServiceImpl implements CricketPlayerService {
     @Override
     public List<CricketPlayer> getMultiplePlayers(List<Integer> ids) throws PlayerManagementException {
         return cricketPlayerRepository.findByIdIn(ids);
+    }
+    public long getCount() {
+        return cricketPlayerRepository.count();
     }
 }

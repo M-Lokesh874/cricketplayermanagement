@@ -25,8 +25,14 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     CricketTeamRepository cricketTeamRepository;
 
     @Override
-    public CricketTeam insertCricketTeam(CricketTeam cricketTeam) {
-        return cricketTeamRepository.save(cricketTeam);
+    public CricketTeam insertCricketTeam(CricketTeam cricketTeam) throws PlayerManagementException {
+        cricketTeam = cricketTeamRepository.save(cricketTeam);
+        if(null != cricketTeam) {
+            return cricketTeam;
+        } else {
+            throw new PlayerManagementException("Cricket player table does not exit");
+        }
+
     }
 
     @Override
