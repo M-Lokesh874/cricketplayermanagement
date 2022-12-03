@@ -1,7 +1,7 @@
 package com.ideas2it.cricketplayermanagement.controller;
 
-import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.JwtRequest;
+import com.ideas2it.cricketplayermanagement.model.JwtResponse;
 import com.ideas2it.cricketplayermanagement.model.User;
 import com.ideas2it.cricketplayermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.ideas2it.cricketplayermanagement.util.config.JwtUtil;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @RestController
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private JwtUtil jwtUtil;
     @PostMapping(value = "/saveUser")
     public ResponseEntity<?> createUser(@RequestBody User user)  {
         try {
@@ -41,10 +42,11 @@ public class UserController {
         } catch (BadCredentialsException badCredentialsException) {
             throw new Exception("Incorrect credentials", badCredentialsException);
         }
-/*        final UserDetails userDetails = myUserDetailsService.loadUserByUsername(
+        final UserDetails userDetails = userService.loadUserByUsername(
                 jwtRequest.getUsername()
-        );*/
-        /*  final String jwt = jwtUtil.generateToken(userDetails);*/
-        return null; /*ResponseEntity.ok(new JwtResponse(jwt));*/
+        );
+        final String jwt = jwtUtil.generateToken(userDetails);
+        System.out.println(jwt);
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
 }

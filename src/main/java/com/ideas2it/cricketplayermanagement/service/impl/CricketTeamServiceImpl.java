@@ -6,6 +6,7 @@ import com.ideas2it.cricketplayermanagement.repository.CricketTeamRepository;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -56,13 +57,14 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     }
 
     @Override
-    public void deleteCricketTeam(int id) throws PlayerManagementException {
+    public ResponseEntity<?> deleteCricketTeam(int id) throws PlayerManagementException {
         Optional<CricketTeam> cricketTeam = cricketTeamRepository.findById(id);
         if(!cricketTeam.isPresent()) {
             throw new PlayerManagementException("Cricket team does not exist with the ID: "+id);
         } else {
             cricketTeamRepository.deleteById(id);
         }
+        return ResponseEntity.ok().body("Deleted successfully");
     }
 
     @Override
@@ -89,10 +91,10 @@ public class CricketTeamServiceImpl implements CricketTeamService {
 
     @Override
     public String updateCricketTeam(CricketTeam cricketTeam, int id) throws PlayerManagementException {
-        cricketTeam = fetchCricketTeamById(id);
-        if(null != cricketTeam) {
-            cricketTeam.setCaptain(cricketTeam.getCaptain());
-            cricketTeam.setWicketKeeper(cricketTeam.getWicketKeeper());
+        CricketTeam oldCricketTeam = fetchCricketTeamById(id);
+        if(null != oldCricketTeam) {
+            cricketTeam.setCaptain(oldCricketTeam.getCaptain());
+            cricketTeam.setWicketKeeper(oldCricketTeam.getWicketKeeper());
             cricketTeamRepository.save(cricketTeam);
             return "updated successfully";
         } else {

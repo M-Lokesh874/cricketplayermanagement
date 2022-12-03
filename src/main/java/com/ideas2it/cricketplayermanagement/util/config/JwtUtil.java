@@ -40,7 +40,7 @@ public class JwtUtil implements Serializable {
     private String createToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 1))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
     public Boolean validateToken(String token, UserDetails userDetails) {

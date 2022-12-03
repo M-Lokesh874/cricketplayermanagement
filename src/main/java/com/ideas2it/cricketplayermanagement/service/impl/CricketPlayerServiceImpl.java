@@ -7,8 +7,6 @@ import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -62,11 +60,10 @@ public class CricketPlayerServiceImpl implements CricketPlayerService {
 
     @Override
     public String updateCricketPlayer(CricketPlayer cricketPlayer, int id) throws PlayerManagementException {
-        cricketPlayer = fetchCricketPlayerById(id);
-        if(null != cricketPlayer) {
-            cricketPlayer.setCricketTeams(cricketPlayer.getCricketTeams());
-            cricketPlayer = cricketPlayerRepository.save(cricketPlayer);
-
+        CricketPlayer oldCricketPlayer = fetchCricketPlayerById(id);
+        if(null != oldCricketPlayer) {
+            cricketPlayer.setCricketTeams(oldCricketPlayer.getCricketTeams());
+            cricketPlayerRepository.save(cricketPlayer);
             return "updated successfully";
         } else {
             return "Oops....!";

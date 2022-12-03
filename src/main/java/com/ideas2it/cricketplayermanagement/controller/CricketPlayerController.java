@@ -41,21 +41,6 @@ public class CricketPlayerController {
     public String home() {
         return "welcome home";
     }
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest jwtRequest) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
-        } catch (BadCredentialsException badCredentialsException) {
-            throw new Exception("Incorrect credentials", badCredentialsException);
-        }
-/*        final UserDetails userDetails = myUserDetailsService.loadUserByUsername(
-                jwtRequest.getUsername()
-        );*/
-      /*  final String jwt = jwtUtil.generateToken(userDetails);*/
-        return null; /*ResponseEntity.ok(new JwtResponse(jwt));*/
-    }
-
     @PostMapping(value = "/saveCricketPlayer")
     public ResponseEntity<?> createCricketPlayer(@RequestBody CricketPlayer cricketPlayer)  {
         try {

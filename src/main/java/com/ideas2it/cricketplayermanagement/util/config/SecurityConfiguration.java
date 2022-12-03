@@ -41,17 +41,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
    @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http.csrf().disable()
-               .authorizeRequests().anyRequest().permitAll();
-               /*.antMatchers("/authenticate")
-               .permitAll()
-               .anyRequest()
-               .authenticated()
-               .and()
-               .exceptionHandling()
+       http.csrf()
+               .disable()
+               .authorizeRequests()
+               .antMatchers("/authenticate").permitAll()
+               .antMatchers("/saveCricketPlayer",
+                       "/getAllCricketPlayers",
+                       "/getCricketPlayer/{id}",
+                       "deleteCricketPlayer/{id}",
+                       "updateCricketPlayer/{id}").hasAuthority("cricketplayer")
+               .antMatchers("/saveCricketTeam",
+                       "/getAllCricketTeams",
+                       "/getCricketTeam/{id}",
+                       "deleteTeam/{id}",
+                       "updateTeam/{id}").hasAuthority("cricketteam")
+               .antMatchers("/saveStats",
+                       "/getAllStats",
+                       "/getStatsById/{id}",
+                       "deleteStats/{id}",
+                       "updateStats/{id}").hasAuthority("cricketplayerstats")
                .and()
                .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+               http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

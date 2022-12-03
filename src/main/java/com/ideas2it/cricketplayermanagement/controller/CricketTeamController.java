@@ -8,6 +8,7 @@ import com.ideas2it.cricketplayermanagement.service.CricketPlayerService;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class CricketTeamController {
     }
 
     @DeleteMapping(value = "deleteTeam/{id}")
-    public void deleteTeam(@PathVariable int id) throws PlayerManagementException {
-        cricketTeamService.deleteCricketTeam(id);
+    public ResponseEntity<?> deleteTeam(@PathVariable int id) throws PlayerManagementException {
+        return cricketTeamService.deleteCricketTeam(id);
     }
 
     @PutMapping(value = "updateTeam/{id}")
