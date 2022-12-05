@@ -6,8 +6,10 @@ import com.ideas2it.cricketplayermanagement.repository.CricketTeamRepository;
 import com.ideas2it.cricketplayermanagement.service.CricketTeamService;
 import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,10 +30,10 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     @Override
     public CricketTeam insertCricketTeam(CricketTeam cricketTeam) throws PlayerManagementException {
         cricketTeam = cricketTeamRepository.save(cricketTeam);
-        if(null != cricketTeam) {
+        if (null != cricketTeam) {
             return cricketTeam;
         } else {
-            throw new PlayerManagementException("Cricket player table does not exit");
+            throw new PlayerManagementException(HttpStatus.NOT_FOUND, "Cricket player table does not exit");
         }
 
     }
@@ -39,18 +41,18 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     @Override
     public List<CricketTeam> fetchCricketTeams() throws PlayerManagementException {
         List<CricketTeam> cricketTeams = cricketTeamRepository.findAll();
-        if(!cricketTeams.isEmpty()) {
+        if (!cricketTeams.isEmpty()) {
             return cricketTeams;
         } else {
-            throw new PlayerManagementException("Cricket team does not exist");
+            throw new PlayerManagementException(HttpStatus.NOT_FOUND, "Cricket team does not exist");
         }
     }
 
     @Override
     public CricketTeam fetchCricketTeamById(int id) throws PlayerManagementException {
         Optional<CricketTeam> cricketTeam = cricketTeamRepository.findById(id);
-        if(!cricketTeam.isPresent()) {
-            throw new PlayerManagementException("Cricket team does not exist with the ID: "+id);
+        if (!cricketTeam.isPresent()) {
+            throw new PlayerManagementException(HttpStatus.NOT_FOUND, "Cricket team does not exist with the ID: " + id);
         } else {
             return cricketTeam.get();
         }
@@ -59,8 +61,8 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     @Override
     public ResponseEntity<?> deleteCricketTeam(int id) throws PlayerManagementException {
         Optional<CricketTeam> cricketTeam = cricketTeamRepository.findById(id);
-        if(!cricketTeam.isPresent()) {
-            throw new PlayerManagementException("Cricket team does not exist with the ID: "+id);
+        if (!cricketTeam.isPresent()) {
+            throw new PlayerManagementException(HttpStatus.NOT_FOUND, "Cricket team does not exist with the ID: " + id);
         } else {
             cricketTeamRepository.deleteById(id);
         }
@@ -71,7 +73,7 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     public String assignCaptain(CricketTeam cricketTeam, CricketPlayer cricketPlayer) {
         cricketTeam.setCaptain(cricketPlayer);
         cricketTeam = cricketTeamRepository.save(cricketTeam);
-        if(null != cricketTeam) {
+        if (null != cricketTeam) {
             return "Captain assigned successfully";
         } else {
             return "Not assigned";
@@ -82,7 +84,7 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     public String assignWicketKeeper(CricketTeam cricketTeam, CricketPlayer cricketPlayer) {
         cricketTeam.setWicketKeeper(cricketPlayer);
         cricketTeam = cricketTeamRepository.save(cricketTeam);
-        if(null != cricketTeam) {
+        if (null != cricketTeam) {
             return "WicketKeeper assigned successfully";
         } else {
             return "Not assigned";
@@ -92,7 +94,7 @@ public class CricketTeamServiceImpl implements CricketTeamService {
     @Override
     public String updateCricketTeam(CricketTeam cricketTeam, int id) throws PlayerManagementException {
         CricketTeam oldCricketTeam = fetchCricketTeamById(id);
-        if(null != oldCricketTeam) {
+        if (null != oldCricketTeam) {
             cricketTeam.setCaptain(oldCricketTeam.getCaptain());
             cricketTeam.setWicketKeeper(oldCricketTeam.getWicketKeeper());
             cricketTeamRepository.save(cricketTeam);

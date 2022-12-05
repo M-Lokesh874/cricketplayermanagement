@@ -4,11 +4,11 @@ import com.ideas2it.cricketplayermanagement.model.JwtRequest;
 import com.ideas2it.cricketplayermanagement.model.JwtResponse;
 import com.ideas2it.cricketplayermanagement.model.User;
 import com.ideas2it.cricketplayermanagement.service.UserService;
+import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import com.ideas2it.cricketplayermanagement.util.config.JwtUtil;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,13 +34,19 @@ public class UserController {
         }
     }
 
+    /**
+     *
+     * @param jwtRequest
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest jwtRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest jwtRequest) throws PlayerManagementException {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getPassword()));
-        } catch (BadCredentialsException badCredentialsException) {
-            throw new Exception("Incorrect credentials", badCredentialsException);
+       } catch (Exception playerManagementException) {
+            throw new PlayerManagementException(HttpStatus.BAD_REQUEST,"Incorrect credentials");
         }
         final UserDetails userDetails = userService.loadUserByUsername(
                 jwtRequest.getUsername()

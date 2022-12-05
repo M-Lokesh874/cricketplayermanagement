@@ -1,11 +1,25 @@
 package com.ideas2it.cricketplayermanagement.util.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
+//@ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class PlayerManagementException extends Exception {
-	public PlayerManagementException(String message) {
-		super(message);
-	}
+    private HttpStatus status;
+
+    public PlayerManagementException(String message) {
+        super(message);
+    }
+
+    public PlayerManagementException(HttpStatus status, String message) {
+        super(message);
+        this.status = status;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
 }

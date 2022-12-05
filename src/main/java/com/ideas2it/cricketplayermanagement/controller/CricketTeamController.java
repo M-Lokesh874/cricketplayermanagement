@@ -1,6 +1,6 @@
 package com.ideas2it.cricketplayermanagement.controller;
 
-import com.ideas2it.cricketplayermanagement.mapper.ObjetMapper;
+import com.ideas2it.cricketplayermanagement.mapper.ObjectMapper;
 import com.ideas2it.cricketplayermanagement.model.CricketPlayer;
 import com.ideas2it.cricketplayermanagement.model.CricketTeam;
 import com.ideas2it.cricketplayermanagement.model.CricketTeamDto;
@@ -10,17 +10,17 @@ import com.ideas2it.cricketplayermanagement.util.exception.PlayerManagementExcep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 public class CricketTeamController {
     @Autowired
+    public ObjectMapper objectMapper;
+    @Autowired
     CricketTeamService cricketTeamService;
     @Autowired
     CricketPlayerService cricketPlayerService;
-
-    @Autowired
-    public ObjetMapper objetMapper;
 
     @PostMapping(value = "saveCricketTeam")
     public CricketTeam createTeam(@RequestBody CricketTeam cricketTeam) throws PlayerManagementException {
@@ -30,13 +30,13 @@ public class CricketTeamController {
     @GetMapping(value = "getAllCricketTeams")
     public List<CricketTeamDto> getCricketTeams() throws PlayerManagementException {
         List<CricketTeam> cricketTeams = cricketTeamService.fetchCricketTeams();
-        return objetMapper.convertTeamEntityIntoDto(cricketTeams);
+        return objectMapper.convertTeamEntityIntoDto(cricketTeams);
     }
 
     @GetMapping(value = "getCricketTeam/{id}")
     public CricketTeamDto getTeamById(@PathVariable int id) throws PlayerManagementException {
         CricketTeam cricketTeam = cricketTeamService.fetchCricketTeamById(id);
-        return objetMapper.convertTeamEntityIntoDto(cricketTeam);
+        return objectMapper.convertTeamEntityIntoDto(cricketTeam);
     }
 
     @DeleteMapping(value = "deleteTeam/{id}")

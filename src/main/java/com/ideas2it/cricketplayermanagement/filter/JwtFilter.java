@@ -15,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
@@ -39,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 System.out.println("JWT Token has expired");
             }
         } else {
-            System.out.println("JWT Token does not begin with Bearer String");
+            System.out.println("JWT Token does not begin with Bearer");
         }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userService.loadUserByUsername(username);

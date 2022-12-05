@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +17,7 @@ import java.util.List;
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String username;
@@ -32,14 +31,12 @@ public class User implements UserDetails {
     public void setId(Long id) {
         this.id = id;
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(this.role));
         return authorities;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;

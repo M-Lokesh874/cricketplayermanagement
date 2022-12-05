@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ObjetMapper {
+public class ObjectMapper {
     @Autowired
     public ModelMapper modelMapper;
     public List<CricketPlayerDto> convertPlayerEntityIntoDto(List<CricketPlayer> cricketPlayers) throws PlayerManagementException {

@@ -6,6 +6,7 @@ import com.ideas2it.cricketplayermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(userName);
     }
     public User saveUser(User user) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 }
